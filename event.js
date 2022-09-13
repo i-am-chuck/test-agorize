@@ -29,15 +29,23 @@ Event.prototype.availabilities = function(fromDate, toDate) {
     const status = event.opening ? 'disponnible' : 'occupé';
     const permanent = event.recurring ? 'tous les' : 'du';
     console.log(`Un créneau est ${status} ${permanent} ${start} jusqu'au ${end}`);
-    console.log('- diff : ' + dateDiff(event.startDate, event.endDate,'minutes') + ' minutes \n')
+    console.log('- diff : ' + dateDiff(event.startDate, event.endDate,'minutes') + ' minutes\n')
   });
 
   let from = date(false, fromDate);
   let to = date(false, toDate);
   console.log(`Demande de dispo du ${from} au ${to}`);
-  console.log('- diff : ' + dateDiff(fromDate, toDate,'days') + ' days');
+  console.log('- diff : ' + dateDiff(fromDate, toDate,'days') + ' days\n');
 
-  /* todo - iterate days */
+  /* iterate days */
+
+  const a = moment(fromDate);
+  const b = moment(toDate);
+
+  for (const i = moment(a); i.diff(b, 'days') <= 0; i.add(1, 'days')) {
+    console.log('- ' + i.locale('fr').format('dddd Do MMMM'));
+  }
+
   /* todo - check in eack date if there is an event */
   /* todo - if no -> display unavailable */
   /* todo - if yes -> divide day in slots and display free and busy time */
