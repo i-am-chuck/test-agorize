@@ -23,6 +23,11 @@ Event.prototype.availabilities = function(fromDate, toDate) {
     const status = event.opening ? 'disponnible' : 'occupé';
     const permanent = event.recurring ? 'tous les' : 'du';
     console.log(`Un créneau est ${status} ${permanent} ${start} jusqu'au ${end}`);
+    let a = moment(event.endDate);
+    let b = moment(event.startDate);
+    let time = a.diff(b, 'minutes')
+    console.log(time / 30)
+    console.log(24*2)
   });
 
   let from = date(false, fromDate);
