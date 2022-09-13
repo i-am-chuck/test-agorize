@@ -42,8 +42,14 @@ Event.prototype.availabilities = function(fromDate, toDate) {
   const a = moment(fromDate);
   const b = moment(toDate);
 
-  for (const i = moment(a); i.diff(b, 'days') <= 0; i.add(1, 'days')) {
-    console.log('- ' + i.locale('fr').format('dddd Do MMMM'));
+  for (const d = moment(a); d.diff(b, 'days') <= 0; d.add(1, 'days')) {
+    eventList.forEach(e => {
+      if (d === moment(e.startDate)) {
+        console.log('event ce jour')
+      } else {
+        console.log('pas d‘event ce jour')
+      }
+    })
   }
 
   /* todo - check in eack date if there is an event */
