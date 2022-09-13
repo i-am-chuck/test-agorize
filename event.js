@@ -36,6 +36,12 @@ Event.prototype.availabilities = function(fromDate, toDate) {
   let to = date(false, toDate);
   console.log(`Demande de dispo du ${from} au ${to}`);
   console.log('- diff : ' + dateDiff(fromDate, toDate,'days') + ' days');
+
+  /* todo - iterate days */
+  /* todo - check in eack date if there is an event */
+  /* todo - if no -> display unavailable */
+  /* todo - if yes -> divide day in slots and display free and busy time */
+  /* todo - test ? */
 };
 
 export { Event }
