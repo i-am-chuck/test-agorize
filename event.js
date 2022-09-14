@@ -121,7 +121,7 @@ function displayAvailabilities(fromDate, toDate) {
 
       daySlots.forEach(slot => {
         if (slot.available) {
-          console.log(slot.hour)
+          console.log('-- ' + slot.hour)
         }
       })
 
