@@ -44,7 +44,6 @@ function displayEvents() {
     const status = event.opening ? 'disponnible' : 'occupé';
     const permanent = event.recurring ? 'tous les' : 'du';
     console.log(`Un créneau est ${status} ${permanent} ${start} jusqu'au ${end}`);
-    /*console.log('- diff : ' + _dateDiff(event.startDate, event.endDate,'minutes') + ' minutes\n')*/
   });
 }
 
@@ -52,13 +51,19 @@ function displayAvailabilityPeriod(fromDate, toDate) {
   let from = displayDate(false, fromDate);
   let to = displayDate(false, toDate);
   console.log(`Demande de dispo du ${from} au ${to}`);
-  /*console.log('- diff : ' + _dateDiff(fromDate, toDate,'days') + ' days\n');*/
 }
 
 function minutesFromMidnight(date) {
   let midnight = moment(date).startOf('day');
-  let minutesFromMidnight = moment(date).diff(midnight, 'minutes');
-  return minutesFromMidnight
+  return moment(date).diff(midnight, 'minutes')
+}
+
+function slotRange(from, to) {
+  let start = (minutesFromMidnight(from) / 30) + 1
+  let end = (minutesFromMidnight(to) / 30) + 1
+  let slots = []
+  for (let i = start; i < end; i++) { slots.push(i) }
+  return slots
 }
 
 function displayAvailabilities(fromDate, toDate) {
@@ -68,7 +73,6 @@ function displayAvailabilities(fromDate, toDate) {
 
   for (const day = from; day.diff(to, 'day') <= 0; day.add(1, 'day')) {
 
-    /* display day */
     console.log(day.locale('fr').format('dddd Do MMMM YYYY'))
 
     const eventsOfDay = eventList.filter(i => moment(i.startDate).locale('fr').format('dddd') === day.locale('fr').format('dddd'))
@@ -88,42 +92,47 @@ function displayAvailabilities(fromDate, toDate) {
         eventsToday.push(event)
       })
 
+      let daySlots = []
+      let countSlots = 0
+      for (let h = 0; h < 24; h++) {
+        for (let hh = 0; hh < 2; hh++) {
+          countSlots++
+          daySlots.push({slot: countSlots, available: false, hour: h + ':' + hh * 30})
+        }
+      }
+
       eventsToday.forEach(event => {
         if (event.opening) {
-          console.log('- créneau dispo')
-          console.log(moment(event.startDate).locale('fr').format('HH:mm'))
-          console.log(minutesFromMidnight(event.startDate))
-          console.log(moment(event.endDate).locale('fr').format('HH:mm'))
-          console.log(minutesFromMidnight(event.endDate))
-
-          let daySlots = []
-          let countSlots = 0
-          for (let h = 0; h < 24; h++) {
-            for (let hh = 0; hh < 2; hh++) {
-              countSlots++
-              daySlots.push({slot: countSlots, busy: false, hour: h+':'+hh*30})
-            }
-          }
-          console.log(daySlots)
+          const slotsToUpdate = slotRange(event.startDate, event.endDate)
+          slotsToUpdate.forEach(slot => {
+            let slotToUpdate = daySlots.findIndex(i => i.slot === slot)
+            daySlots[slotToUpdate].available = true
+          })
+        } else {
+          const slotsToUpdate = slotRange(event.startDate, event.endDate)
+          slotsToUpdate.forEach(slot => {
+            let slotToUpdate = daySlots.findIndex(i => i.slot === slot)
+            daySlots[slotToUpdate].available = false
+          })
         }
       })
 
+      console.log('- Voici les créneaux dispos ce jour')
 
+      daySlots.forEach(slot => {
+        if (slot.available) {
+          console.log(slot.hour)
+        }
+      })
+
+      console.log('\n')
 
     } else {
 
-      console.log('- Il n‘y a aucun évènement ce jour')
+      console.log('- Il n‘y a aucune dispo ce jour\n')
 
     }
-
-    console.log('\n')
   }
-}
-
-function _dateDiff(from, to, unit) {
-  let a = moment(to);
-  let b = moment(from);
-  return a.diff(b, unit)
 }
 
 export { Event }
